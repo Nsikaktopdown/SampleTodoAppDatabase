@@ -1,8 +1,14 @@
 package ng.codeimpact.sampletodoappdatabase;
 
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,8 +19,21 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import ng.codeimpact.sampletodoappdatabase.adapter.NoteListAdapter;
+import ng.codeimpact.sampletodoappdatabase.data.NoteContract;
+import ng.codeimpact.sampletodoappdatabase.data.NoteDbHelper;
+import ng.codeimpact.sampletodoappdatabase.model.Note_Item;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private NoteDbHelper mDbHelper;
+    private ArrayList<Note_Item> noteDetailsList;
+    private RecyclerView recyclerView;
+    private NoteListAdapter noteListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,19 +46,38 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
+
+                startActivity(new Intent(MainActivity.this, AddActivity.class));
             }
         });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-            this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        mDbHelper = new NoteDbHelper(this);
+
+
+        // Get all the Android Versions data from db
+        noteDetailsList = mDbHelper.getNote_Items();
+
+
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_list);
+        noteListAdapter = new NoteListAdapter(getApplicationContext(),noteDetailsList);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setHasFixedSize(true);
+
+        recyclerView.setAdapter(noteListAdapter);
     }
 
     @Override
@@ -67,7 +105,9 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_clear) {
+
+            clearAll();
             return true;
         }
 
@@ -97,5 +137,15 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    //this method will clear all the records on the Note table
+    public void clearAll(){
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        db.delete(NoteContract.Note.TABLE_NAME, null, null);
+        db.close();
+        noteListAdapter.clear();
+       noteListAdapter.notifyDataSetChanged();
+
     }
 }

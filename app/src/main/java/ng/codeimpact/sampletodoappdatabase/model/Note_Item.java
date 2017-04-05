@@ -7,12 +7,19 @@ package ng.codeimpact.sampletodoappdatabase.model;
 public class Note_Item {
 
     private String title, description;
+    private  int id;
+
 
 
     public Note_Item(String title, String description) {
         this.title = title;
         this.description = description;
     }
+
+    public Note_Item() {
+
+    }
+
     public String getTitle() {
         return title;
     }
@@ -28,6 +35,12 @@ public class Note_Item {
     public void setDescription(String description) {
         this.description = description;
     }
+    public int getId() {
+        return id;
+    }
 
+    public void setId(int id) {
+        this.id = id;
+    }
 
 }

@@ -2,6 +2,7 @@ package ng.codeimpact.sampletodoappdatabase.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +11,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import ng.codeimpact.sampletodoappdatabase.AddActivity;
 import ng.codeimpact.sampletodoappdatabase.R;
 import ng.codeimpact.sampletodoappdatabase.model.Note_Item;
 
@@ -21,7 +24,8 @@ import ng.codeimpact.sampletodoappdatabase.model.Note_Item;
 
 public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyViewHolder> {
 
-    private List<Note_Item> noteList;
+    private ArrayList<Note_Item> noteList;
+    Context c;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -37,8 +41,9 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
     }
 
 
-    public NoteListAdapter(List<Note_Item> noteList) {
+    public NoteListAdapter( Context c,ArrayList<Note_Item> noteList) {
         this.noteList = noteList;
+        this.c = c;
     }
 
     @Override
@@ -51,10 +56,26 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
-        Note_Item item = noteList.get(position);
+        final Note_Item item = noteList.get(position);
 
         holder.title.setText(item.getTitle());
         holder.description.setText(item.getDescription());
+
+
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Context context = holder.itemView.getContext();
+                Intent intent = new Intent(context, AddActivity.class);
+                intent.putExtra("note_title", item.getTitle() );
+                intent.putExtra("note_desc", item.getDescription());
+                intent.putExtra("mode","update");
+                intent.putExtra("id", item.getId());
+                context.startActivity(intent);
+            }
+        });
 
 
 
@@ -64,6 +85,12 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
     @Override
     public int getItemCount() {
         return noteList.size();
+    }
+
+
+    public void clear(){
+        noteList.clear();
+            notifyDataSetChanged();
     }
 }
 
