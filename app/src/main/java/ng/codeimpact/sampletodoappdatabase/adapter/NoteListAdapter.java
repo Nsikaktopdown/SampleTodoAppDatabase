@@ -10,7 +10,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.List;
+
 import ng.codeimpact.sampletodoappdatabase.R;
+import ng.codeimpact.sampletodoappdatabase.model.Note_Item;
 
 /**
  * Created by Nsikak  Thompson on 4/5/2017.
@@ -18,67 +21,49 @@ import ng.codeimpact.sampletodoappdatabase.R;
 
 public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyViewHolder> {
 
-    private List<Home_item> moviesList;
+    private List<Note_Item> noteList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        ImageView imgItem;
-        TextView txtItem,  description;
-        RelativeLayout layer;
+
+        TextView title, description;
 
         public MyViewHolder(View view) {
             super(view);
-            imgItem = (ImageView) view.findViewById(R.id.thumbnail);
-            txtItem = (TextView) view.findViewById(R.id.title);
-            layer = (RelativeLayout) view.findViewById(R.id.layer);
+
+            title = (TextView) view.findViewById(R.id.note_title);
+            description = (TextView) view.findViewById(R.id.note_desciption);
 
         }
     }
 
 
-    public HomeAdapter(List<Home_item> moviesList) {
-        this.moviesList = moviesList;
+    public NoteListAdapter(List<Note_Item> noteList) {
+        this.noteList = noteList;
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.homelist_item, parent, false);
+                .inflate(R.layout.item_list, parent, false);
 
         return new MyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
-        Home_item item = moviesList.get(position);
+        Note_Item item = noteList.get(position);
 
-        /// holder.layer.setBackgroundColor(item.getColor());
-        // Toast.makeText(holder.layer.getContext(), item.getColor(), Toast.LENGTH_SHORT).show();
-
-
-        Context context = holder.txtItem.getContext();
-        ChronicaProRegularHelper.applyFont(context, holder.txtItem);
-        holder.imgItem.setImageResource(item.getImage());
-        holder.txtItem.setText(item.getTitle());
+        holder.title.setText(item.getTitle());
+        holder.description.setText(item.getDescription());
 
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Context context = holder.itemView.getContext();
-
-                if(position ==0 ){
-                    context.startActivity(new Intent(context, CategoryActivity.class));
-                }
-
-            }
-        });
 
 
     }
 
     @Override
     public int getItemCount() {
-        return moviesList.size();
+        return noteList.size();
     }
 }
 
