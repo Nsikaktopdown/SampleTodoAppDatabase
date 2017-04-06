@@ -102,9 +102,9 @@ public class NoteDbHelper extends SQLiteOpenHelper {
 
 
         // update data to table
-        db.update(NOTE_TABLE_NAME, // table name
-                contentValues,
-                NOTE_ROW_ID +  " LIKE ?",
+        db.update(NOTE_TABLE_NAME, // select from table name
+                contentValues,    //values
+                NOTE_ROW_ID +  " LIKE ?", //Where id =
                 seletionArgs);
 
 

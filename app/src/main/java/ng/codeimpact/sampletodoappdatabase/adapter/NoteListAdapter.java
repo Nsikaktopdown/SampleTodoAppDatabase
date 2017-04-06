@@ -71,7 +71,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.MyView
                 Intent intent = new Intent(context, AddActivity.class);
                 intent.putExtra("note_title", item.getTitle() );
                 intent.putExtra("note_desc", item.getDescription());
-                intent.putExtra("mode","update");
+                intent.putExtra("update",true);
                 intent.putExtra("id", item.getId());
                 context.startActivity(intent);
             }

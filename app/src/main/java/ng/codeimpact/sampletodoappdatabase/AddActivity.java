@@ -20,13 +20,15 @@ import ng.codeimpact.sampletodoappdatabase.data.NoteDbHelper;
 import ng.codeimpact.sampletodoappdatabase.model.Note_Item;
 
 import static android.R.attr.id;
+import static android.R.attr.mode;
 
 public class AddActivity extends AppCompatActivity {
     private final static String LOG_TAG = AddActivity.class.getSimpleName();
     private NoteDbHelper mDbHelper;
     private EditText add_title, add_description;
     String title_txt;
-    String description_txt, mode;
+    String description_txt;
+    boolean isUpdate;
     int id;
 
 
@@ -52,13 +54,13 @@ public class AddActivity extends AppCompatActivity {
 
         //getting a reference to the DbHelper
         mDbHelper = new NoteDbHelper(this);
-        Intent intent = getIntent();
 
-        if (intent != null) {
-            String extra_title = intent.getStringExtra("note_title");
-            String extra_description = intent.getStringExtra("note_desc");
-            mode = intent.getStringExtra("mode");
-            id = intent.getIntExtra("id",0);
+        isUpdate = getIntent().getBooleanExtra("update", false);
+
+        if (isUpdate) {
+            String extra_title = getIntent().getStringExtra("note_title");
+            String extra_description = getIntent().getStringExtra("note_desc");
+            id = getIntent().getIntExtra("id",0);
             add_title.setText(extra_title);
             add_description.setText(extra_description);
         }
@@ -68,8 +70,12 @@ public class AddActivity extends AppCompatActivity {
 
     // Update note
     private void updateNote() {
+
         title_txt = add_title.getText().toString();
         description_txt = add_description.getText().toString();
+        if (!dataValidated(title_txt, description_txt)) {
+            return;
+        }
         mDbHelper.updateNote(new Note_Item(title_txt, description_txt), id);
         Toast.makeText(this, "Note Updated", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(AddActivity.this, MainActivity.class));
@@ -121,10 +127,12 @@ public class AddActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_add) {
 
-            if (mode.equals("update")) {
+            if (isUpdate) {
                 updateNote();
+
             } else {
                 addNote();
+
             }
 
             return true;

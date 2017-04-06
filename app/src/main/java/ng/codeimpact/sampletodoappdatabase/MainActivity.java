@@ -49,7 +49,9 @@ public class MainActivity extends AppCompatActivity
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
 
-                startActivity(new Intent(MainActivity.this, AddActivity.class));
+                Intent intent = new Intent(MainActivity.this, AddActivity.class);
+                intent.putExtra("update", false);
+                startActivity(intent);
             }
         });
 
@@ -71,7 +73,7 @@ public class MainActivity extends AppCompatActivity
 
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_list);
-        noteListAdapter = new NoteListAdapter(getApplicationContext(),noteDetailsList);
+        noteListAdapter = new NoteListAdapter(getApplicationContext(), noteDetailsList);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -140,12 +142,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     //this method will clear all the records on the Note table
-    public void clearAll(){
+    public void clearAll() {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         db.delete(NoteContract.Note.TABLE_NAME, null, null);
         db.close();
         noteListAdapter.clear();
-       noteListAdapter.notifyDataSetChanged();
+        noteListAdapter.notifyDataSetChanged();
 
     }
 }
